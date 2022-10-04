@@ -11,6 +11,7 @@ import {
 import { useSelector, useDispatch } from "react-redux";
 import Colors from "../../constants/Colors";
 import ProjectReportItem from "../../components/inner/ProjectReportItem";
+import * as OpenAnithing from "react-native-openanything";
 
 const ProjectReports = (props) => {
    var projectId = props.route.params;
@@ -27,9 +28,9 @@ const ProjectReports = (props) => {
             renderItem={(itemData) => (
                <ProjectReportItem
                   item={itemData.item}
-                  //  onSelect={() => {
-                  //     getProjectReports(itemData.item.id);
-                  //  }}
+                  onSelect={() => {
+                     OpenAnithing.Pdf(itemData.item.file);
+                  }}
                ></ProjectReportItem>
             )}
          />

@@ -12,6 +12,9 @@ import {
 import Colors from "../../../constants/Colors";
 import { useSelector, useDispatch } from "react-redux";
 import ReceiptItem from "../../../components/inner/ReceiptItem";
+import { MaterialIcons } from "@expo/vector-icons";
+import { HeaderButtons, Item } from "react-navigation-header-buttons";
+import CustomHeaderButton from "../../../components/UI/HeaderButton";
 
 const ReceiptList = () => {
    const receipts = useSelector((state) => state.receipts.receipts);
@@ -38,6 +41,25 @@ const ReceiptList = () => {
          />
       </View>
    );
+};
+
+export const screenOptions = (navData) => {
+   return {
+      headerTitle: "My Receipts",
+      headerRight: () => (
+         <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
+            <Item
+               title="Add"
+               color="black"
+               icon={MaterialIcons}
+               iconName={Platform.OS === "android" ? "create" : "ios-create"}
+               onPress={() => {
+                  navData.navigation.navigate("CreateProduct");
+               }}
+            />
+         </HeaderButtons>
+      ),
+   };
 };
 
 const styles = StyleSheet.create({

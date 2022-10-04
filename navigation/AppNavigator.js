@@ -7,10 +7,16 @@ import {
 import ReceiptList from "../screens/Project/Receipt/ReceiptList";
 import AuthScreen from "../screens/Auth/AuthScreen";
 import ProjectList from "../screens/Project/ProjectList";
+import { screenOptions as projectScreenOptions } from "../screens/Project/ProjectList";
 import ProjectReports from "../screens/Project/ProjectReports";
+import CreateProject from "../screens/Project/CreateProject";
+import { screenOptions as createProjectScreenOptions } from "../screens/Project/CreateProject";
+import EditProject from "../screens/Project/EditProject";
+import { screenOptions as editProjectScreenOptions } from "../screens/Project/EditProject";
 import Colors from "../constants/Colors";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import Icon, { Icons } from "../components/inner/Icon";
+import { screenOptions as receiptsScreenOptions } from "../screens/Project/Receipt/ReceiptList";
 
 const defaultNavOptions = {
    headerStyle: {
@@ -33,7 +39,7 @@ export const ReceiptNavigator = () => {
          <ReceiptStackNavigator.Screen
             name="ReceiptList"
             component={ReceiptList}
-            // options={productsOverviewScreenOptions}
+            options={receiptsScreenOptions}
          />
       </ReceiptStackNavigator.Navigator>
    );
@@ -61,12 +67,22 @@ export const ProjectNavigator = () => {
          <ProjectStackNavigator.Screen
             name="ProjectList"
             component={ProjectList}
-            // options={productsOverviewScreenOptions}
+            options={projectScreenOptions}
          />
          <ProjectStackNavigator.Screen
             name="ProjectReports"
             component={ProjectReports}
             // options={productsOverviewScreenOptions}
+         />
+         <ProjectStackNavigator.Screen
+            name="CreateProject"
+            component={CreateProject}
+            options={createProjectScreenOptions}
+         />
+         <ProjectStackNavigator.Screen
+            name="EditProject"
+            component={EditProject}
+            options={editProjectScreenOptions}
          />
       </ProjectStackNavigator.Navigator>
    );

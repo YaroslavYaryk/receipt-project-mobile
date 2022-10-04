@@ -20,11 +20,7 @@ const ProjectReportItem = (props) => {
                <Text>{item.date}</Text>
             </View>
             <View style={styles.buttonBlockInner}>
-               <TouchableOpacity
-                  onPress={() => {
-                     console.log("preview report");
-                  }}
-               >
+               <TouchableOpacity onPress={props.onSelect}>
                   <Text>Preview Report</Text>
                </TouchableOpacity>
             </View>
