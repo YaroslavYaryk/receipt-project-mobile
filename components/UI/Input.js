@@ -1,5 +1,6 @@
 import React, { useReducer, useEffect } from "react";
 import { View, Text, TextInput, StyleSheet } from "react-native";
+import Colors from "../../constants/Colors";
 
 const INPUT_CHANGE = "INPUT_CHANGE";
 const INPUT_BLUR = "INPUT_BLUR";
@@ -61,6 +62,11 @@ const Input = (props) => {
          isValid = false;
          console.log("5");
       }
+
+      if (props.id == "price" && !text.match(/^-?\d*(\.\d+)?$/)) {
+         isValid = false;
+      }
+
       dispatch({ type: INPUT_CHANGE, value: text, isValid: isValid });
    };
 
@@ -73,7 +79,10 @@ const Input = (props) => {
          <Text style={styles.label}>{props.label}</Text>
          <TextInput
             {...props}
-            style={styles.input}
+            style={[
+               styles.input,
+               { height: props.height ? props.height : null },
+            ]}
             value={inputState.value}
             onChangeText={textChangeHandler}
             onBlur={lostFocusHandler}
@@ -92,13 +101,15 @@ const styles = StyleSheet.create({
       width: "100%",
    },
    label: {
-      fontFamily: "open-sans-bold",
+      // fontFamily: "open-sans",
       marginVertical: 8,
+      fontWeight: "500",
+      fontSize: 16,
    },
    input: {
       paddingHorizontal: 2,
-      paddingVertical: 5,
-      borderBottomColor: "#ccc",
+      paddingVertical: 0,
+      borderBottomColor: Colors.headerBold,
       borderBottomWidth: 1,
    },
    errorContainer: {

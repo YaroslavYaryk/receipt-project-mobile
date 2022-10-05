@@ -7,6 +7,7 @@ import {
    StyleSheet,
    ActivityIndicator,
    TouchableOpacity,
+   Alert,
 } from "react-native";
 // import { useSelector, useDispatch } from "react-redux";
 import Colors from "../../../constants/Colors";
@@ -16,8 +17,33 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import CustomHeaderButton from "../../../components/UI/HeaderButton";
 
-const ReceiptList = () => {
+const ReceiptList = (props) => {
+   const [isLoading, setIsLoading] = useState(false);
+   const [error, setError] = useState();
+
    const receipts = useSelector((state) => state.receipts.receipts);
+
+   useEffect(() => {
+      if (error) {
+         Alert.alert("An error occurred!", error, [{ text: "Okay" }]);
+      }
+   }, [error]);
+
+   if (isLoading) {
+      return (
+         <View style={styles.centered}>
+            <ActivityIndicator size="large" color={Colors.headerBold} />
+         </View>
+      );
+   }
+
+   if (!receipts.length) {
+      return (
+         <View style={styles.centered}>
+            <Text>There is no any project</Text>
+         </View>
+      );
+   }
 
    return (
       <View style={styles.container}>
@@ -30,12 +56,12 @@ const ReceiptList = () => {
             renderItem={(itemData) => (
                <ReceiptItem
                   item={itemData.item}
-                  // onSelect={() => {
-                  //    getProductDetails(
-                  //       itemData.item.id,
-                  //       itemData.item.onlyName
-                  //    );
-                  // }}
+                  onSelect={() => {
+                     props.navigation.navigate("ReceiptDetails", {
+                        id: itemData.item.id,
+                        name: itemData.item.projectName,
+                     });
+                  }}
                ></ReceiptItem>
             )}
          />
@@ -54,7 +80,7 @@ export const screenOptions = (navData) => {
                icon={MaterialIcons}
                iconName={Platform.OS === "android" ? "create" : "ios-create"}
                onPress={() => {
-                  navData.navigation.navigate("CreateProduct");
+                  navData.navigation.navigate("CreateReceipt");
                }}
             />
          </HeaderButtons>
@@ -63,6 +89,12 @@ export const screenOptions = (navData) => {
 };
 
 const styles = StyleSheet.create({
+   centered: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: Colors.primary,
+   },
    container: {
       flex: 1,
       backgroundColor: Colors.primary,

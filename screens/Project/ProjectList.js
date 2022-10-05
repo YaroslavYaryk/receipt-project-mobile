@@ -22,7 +22,6 @@ import { useIsFocused } from "@react-navigation/native";
 const ProjectList = (props) => {
    const [isLoading, setIsLoading] = useState(false);
    const [error, setError] = useState();
-   const [itemHeight, setItemHeight] = useState();
 
    var projects = useSelector((state) => state.projects.projects);
    const dispatch = useDispatch();
@@ -100,76 +99,6 @@ const ProjectList = (props) => {
                   ></ProjectItem>
                </View>
             )}
-            // renderHiddenItem={(itemData, rowMap) => (
-            //    <View
-            //       style={{
-            //          flexDirection: "row",
-            //          justifyContent: "space-between",
-            //          alignItems: "flex-end",
-            //          // overflow: "hidden",
-            //          // height: itemData.item.height,
-            //          height: "50%",
-            //       }}
-            //    >
-            //       <View
-            //          key={Math.random() + Math.random() + Math.random()}
-            //          onLayout={(event) => {
-            //             rowMap[itemData.item.id].closeRow();
-            //          }}
-            //          style={{
-            //             backgroundColor: "#7895B2",
-            //             borderRadius: 10,
-            //             width: 75,
-            //          }}
-            //       >
-            //          <TouchableOpacity
-            //             onPress={() => {
-            //                props.navigation.navigate("EditProject", {
-            //                   projectId: itemData.item.id,
-            //                });
-            //             }}
-            //          >
-            //             <View
-            //                style={{
-            //                   height: "100%",
-            //                   width: "100%",
-            //                   alignItems: "center",
-            //                   justifyContent: "center",
-            //                }}
-            //             >
-            //                <Text style={styles.buttonSwipe}>Edit</Text>
-            //             </View>
-            //          </TouchableOpacity>
-            //       </View>
-            //       <View
-            //          style={{
-            //             backgroundColor: "#F05454",
-            //             borderRadius: 10,
-
-            //             width: 75,
-            //          }}
-            //       >
-            //          <TouchableOpacity
-            //             onPress={() => {
-            //                handleProjectDelete(itemData.item.id);
-            //             }}
-            //          >
-            //             <View
-            //                style={{
-            //                   height: "100%",
-            //                   width: "100%",
-            //                   alignItems: "center",
-            //                   justifyContent: "center",
-            //                }}
-            //             >
-            //                <Text style={styles.buttonSwipe}>Delete</Text>
-            //             </View>
-            //          </TouchableOpacity>
-            //       </View>
-            //    </View>
-            // )}
-            // leftOpenValue={75}
-            // rightOpenValue={-75}
          />
       </View>
    );

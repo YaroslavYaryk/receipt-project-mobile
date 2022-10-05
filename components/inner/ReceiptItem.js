@@ -113,12 +113,7 @@ const ReceiptItem = (props) => {
                            borderRadius: 10,
                         }}
                      >
-                        <TouchableCmp
-                           onPress={() => {
-                              console.log("press");
-                           }}
-                           useForeground
-                        >
+                        <TouchableCmp onPress={props.onSelect} useForeground>
                            <Text style={{ fontSize: 18 }}>Preview Receipt</Text>
                         </TouchableCmp>
                      </View>
