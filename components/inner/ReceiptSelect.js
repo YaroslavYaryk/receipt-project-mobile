@@ -31,7 +31,7 @@ const ReceiptSelect = (props) => {
       if (element.key == -1) {
          setShowInput(true);
       } else {
-         props.setValue({ value: element.label, new: false });
+         props.setValue({ value: element.label, id: element.key, new: false });
          setShowInput(false);
       }
    };
@@ -65,7 +65,7 @@ const ReceiptSelect = (props) => {
                value={props.value}
                placeholder={props.initValue}
                onChangeText={(el) => {
-                  props.setValue({ value: el, new: true });
+                  props.setValue({ value: el, new: true, id: -1 });
                }}
             />
          )}

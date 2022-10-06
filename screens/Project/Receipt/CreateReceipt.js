@@ -16,7 +16,10 @@ import {
    Dimensions,
    TextInput,
    ScrollView,
+   Image,
    Alert,
+   Modal,
+   SafeAreaView,
 } from "react-native";
 // import { ImagePicker } from "expo-image-multiple-picker";
 import * as ImagePicker from "expo-image-picker";
@@ -29,6 +32,10 @@ import { useSelector, useDispatch } from "react-redux";
 import ReceiptSelect from "../../../components/inner/ReceiptSelect";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import Input from "../../../components/UI/Input";
+import * as receiptActions from "../../../store/actions/receiptActions";
+import Moment from "moment";
+import BottomPopup from "../../../components/UI/BottomPopup";
+import { useIsFocused } from "@react-navigation/native";
 
 const { width } = Dimensions.get("window");
 
@@ -57,16 +64,54 @@ const formReducer = (state, action) => {
    return state;
 };
 
-const CreateReceipt = () => {
+const CreateReceipt = (props) => {
    const [libraryImages, setLibraryImages] = useState([]);
    const [cameraImage, setCameraImage] = useState(null);
    const [inputProject, setInputProject] = useState(null);
    const [inputCategory, setInputCategory] = useState(null);
+   const [isLoading, setIsLoading] = useState(false);
+   const [error, setError] = useState();
+
    const projects = useSelector((state) => state.projects.projects);
    const categories = useSelector((state) => state.receipts.categories);
 
    const [date, setDate] = useState(new Date());
    const [open, setOpen] = useState(false);
+   const [popupOpen, setPopupOpen] = useState(false);
+
+   const isFocused = useIsFocused();
+
+   const dispatch = useDispatch();
+
+   const loadProjects = useCallback(async () => {
+      setError(null);
+      setIsLoading(true);
+      try {
+         await dispatch(projectActions.fetchProjects());
+      } catch (err) {
+         setError(err.message);
+      }
+      setIsLoading(false);
+   }, [dispatch, setError, setIsLoading]);
+
+   useEffect(() => {
+      loadProjects();
+   }, [dispatch, loadProjects, isFocused]);
+
+   const loadCategories = useCallback(async () => {
+      setError(null);
+      setIsLoading(true);
+      try {
+         await dispatch(receiptActions.fetchCategories());
+      } catch (err) {
+         setError(err.message);
+      }
+      setIsLoading(false);
+   }, [dispatch, setError, setIsLoading]);
+
+   useEffect(() => {
+      loadCategories();
+   }, [dispatch, loadCategories, isFocused]);
 
    const pickImage = async () => {
       // No permissions request is necessary for launching the image library
@@ -78,7 +123,12 @@ const CreateReceipt = () => {
       });
 
       if (!result.cancelled) {
-         setLibraryImages(result.selected.map((el) => el.uri));
+         if (result.selected) {
+            setLibraryImages(result.selected.map((el) => el.uri));
+         } else {
+            setLibraryImages([result.uri]);
+         }
+         setPopupOpen(false);
       }
    };
 
@@ -98,8 +148,8 @@ const CreateReceipt = () => {
          allowsMultipleSelection: true,
       });
       if (!result.cancelled) {
-         console.log(result.uri);
          setCameraImage(result.uri);
+         setPopupOpen(false);
       }
    };
 
@@ -110,6 +160,7 @@ const CreateReceipt = () => {
          description: "",
          business: "",
          persons: "",
+         comment: "",
       },
       inputValidities: {
          company: false,
@@ -117,6 +168,7 @@ const CreateReceipt = () => {
          description: false,
          business: false,
          persons: false,
+         comment: true,
       },
       formIsValid: false,
    });
@@ -132,6 +184,56 @@ const CreateReceipt = () => {
       },
       [dispatchFormState]
    );
+
+   var images = libraryImages;
+   if (cameraImage) {
+      images = libraryImages.concat(cameraImage);
+   }
+
+   const handleCreateReceipt = useCallback(async () => {
+      var error = null;
+      if (!cameraImage && libraryImages.length < 1) {
+         error = "Choose at least one photo";
+      } else if (!inputProject) {
+         error = "Choose a project";
+      } else if (!inputCategory) {
+         error = "Choose a category";
+      }
+      if (error) {
+         Alert.alert("An error occurred!", error, [{ text: "Okay" }]);
+      } else {
+         try {
+            setError(null);
+            setIsLoading(true);
+            await dispatch(
+               receiptActions.createReceipt(
+                  inputProject,
+                  inputCategory,
+                  formState.inputValues.company,
+                  Moment(date).format("YYYY-MM-DD"),
+                  formState.inputValues.price,
+                  images,
+                  formState.inputValues.description,
+                  formState.inputValues.business,
+                  formState.inputValues.persons,
+                  formState.inputValues.comment
+               )
+            );
+         } catch (error) {
+            console.log(error.message);
+            setError(error.message);
+         }
+         setIsLoading(false);
+         props.navigation.navigate("ReceiptList");
+      }
+   }, [
+      dispatch,
+      cameraImage,
+      libraryImages,
+      inputCategory,
+      inputProject,
+      formState,
+   ]);
 
    const renderInner = () => (
       <View style={styles.panel}>
@@ -177,7 +279,7 @@ const CreateReceipt = () => {
    }));
    categoriesData.push({
       key: -1,
-      label: "other project",
+      label: "other category",
    });
 
    const onChange = (event, selectedDate) => {
@@ -185,6 +287,20 @@ const CreateReceipt = () => {
       setOpen(false);
       setDate(currentDate);
    };
+
+   useEffect(() => {
+      if (error) {
+         Alert.alert("An error occurred!", error, [{ text: "Okay" }]);
+      }
+   }, [error]);
+
+   if (isLoading) {
+      return (
+         <View style={styles.centered}>
+            <ActivityIndicator size="large" color={Colors.headerBold} />
+         </View>
+      );
+   }
 
    return (
       <View style={styles.container}>
@@ -211,7 +327,7 @@ const CreateReceipt = () => {
             </View>
             <View style={[{ margin: 10, marginTop: -10, marginBottom: 18 }]}>
                <Input
-                  id="category"
+                  id="company"
                   label="Company"
                   errorText="Please enter a valid category!"
                   keyboardType="default"
@@ -270,13 +386,38 @@ const CreateReceipt = () => {
             </View>
             <View style={styles.ImagePicherWrapper}>
                <View style={styles.ImagePicherInner}>
-                  <TouchableOpacity onPress={() => bs.current.snapTo(0)}>
+                  <TouchableOpacity
+                     onPress={() => {
+                        setPopupOpen(!popupOpen);
+                     }}
+                  >
                      <Text style={styles.panelButtonTitle}>
                         Chose images for receipt
                      </Text>
                   </TouchableOpacity>
                </View>
             </View>
+            {images.length > 0 && (
+               <View
+                  style={{
+                     height: 50,
+                     flexDirection: "row",
+                     alignItems: "flex-start",
+                     justifyContent: "space-around",
+                     marginTop: 10,
+                     // width: "10%",
+                  }}
+               >
+                  {images.map((el) => (
+                     <View key={el} style={{ height: "100%" }}>
+                        <Image
+                           source={{ uri: el }}
+                           style={styles.imageScroll}
+                        />
+                     </View>
+                  ))}
+               </View>
+            )}
             <View style={[{ margin: 10, marginBottom: 18 }]}>
                <Input
                   id="description"
@@ -335,14 +476,14 @@ const CreateReceipt = () => {
                <Input
                   id="comment"
                   label="Comment"
-                  errorText="Please enter a valid people!"
+                  errorText="Please enter a valid comment!"
                   keyboardType="default"
                   autoCapitalize="sentences"
                   autoCorrect
                   returnKeyType="next"
                   onInputChange={inputChangeHandler}
                   initialValue={""}
-                  initiallyValid={false}
+                  initiallyValid={true}
                   height={40}
                   multiline={true}
                   textAlignVertical={"top"}
@@ -359,9 +500,7 @@ const CreateReceipt = () => {
                >
                   <TouchableOpacity
                      disabled={formState.formIsValid ? false : true}
-                     onPress={() => {
-                        handleCreateProject(formState.inputValues.name);
-                     }}
+                     onPress={handleCreateReceipt}
                      activeOpacity={0}
                   >
                      <View
@@ -377,7 +516,17 @@ const CreateReceipt = () => {
                </View>
             </View>
          </ScrollView>
-         <BottomSheet
+         <SafeAreaView style={{ flex: 1 }}>
+            <BottomPopup
+               show={popupOpen}
+               animationType={"slide"}
+               closePopup={() => setPopupOpen(!popupOpen)}
+               haveOutsideTouch={true}
+               openCamera={openCamera}
+               pickImage={pickImage}
+            />
+         </SafeAreaView>
+         {/* <BottomSheet
             ref={bs}
             snapPoints={[330, 0]}
             renderContent={renderInner}
@@ -385,12 +534,18 @@ const CreateReceipt = () => {
             initialSnap={1}
             callbackNode={fall}
             enabledGestureInteraction={true}
-         />
+         /> */}
       </View>
    );
 };
 
 const styles = StyleSheet.create({
+   centered: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: Colors.primary,
+   },
    container: {
       flex: 1,
       backgroundColor: Colors.primary,
@@ -528,6 +683,12 @@ const styles = StyleSheet.create({
       fontSize: 18,
       color: Colors.headerBold,
       fontWeight: "600",
+   },
+   imageScroll: {
+      width,
+      height: "100%",
+      resizeMode: "contain",
+      position: "relative",
    },
 });
 

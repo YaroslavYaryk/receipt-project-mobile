@@ -16,12 +16,31 @@ import ReceiptItem from "../../../components/inner/ReceiptItem";
 import { MaterialIcons } from "@expo/vector-icons";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import CustomHeaderButton from "../../../components/UI/HeaderButton";
+import * as receiptActions from "../../../store/actions/receiptActions";
+import { HOST, PORT } from "../../../constants/server";
 
 const ReceiptList = (props) => {
    const [isLoading, setIsLoading] = useState(false);
    const [error, setError] = useState();
 
    const receipts = useSelector((state) => state.receipts.receipts);
+
+   const dispatch = useDispatch();
+
+   const loadReceipts = useCallback(async () => {
+      setError(null);
+      setIsLoading(true);
+      try {
+         await dispatch(receiptActions.fetchReceipts());
+      } catch (err) {
+         setError(err.message);
+      }
+      setIsLoading(false);
+   }, [dispatch, setError, setIsLoading]);
+
+   useEffect(() => {
+      loadReceipts();
+   }, [dispatch, loadReceipts]);
 
    useEffect(() => {
       if (error) {
@@ -40,7 +59,7 @@ const ReceiptList = (props) => {
    if (!receipts.length) {
       return (
          <View style={styles.centered}>
-            <Text>There is no any project</Text>
+            <Text>There is no any receipt</Text>
          </View>
       );
    }
@@ -56,6 +75,7 @@ const ReceiptList = (props) => {
             renderItem={(itemData) => (
                <ReceiptItem
                   item={itemData.item}
+                  defaultImage={`${HOST}:${PORT}/static/images/restaurant.jpg`}
                   onSelect={() => {
                      props.navigation.navigate("ReceiptDetails", {
                         id: itemData.item.id,

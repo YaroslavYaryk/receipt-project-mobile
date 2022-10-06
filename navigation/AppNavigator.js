@@ -16,6 +16,7 @@ import { screenOptions as editProjectScreenOptions } from "../screens/Project/Ed
 import ReceiptDetails from "../screens/Project/Receipt/ReceiptDetails";
 import { screenOptions as receiptDetailsScreenOptions } from "../screens/Project/Receipt/ReceiptDetails";
 import CreateReceipt from "../screens/Project/Receipt/CreateReceipt";
+import EditReceipt from "../screens/Project/Receipt/EditReceipt";
 import Colors from "../constants/Colors";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import Icon, { Icons } from "../components/inner/Icon";
@@ -52,6 +53,11 @@ export const ReceiptNavigator = () => {
          <ReceiptStackNavigator.Screen
             name="CreateReceipt"
             component={CreateReceipt}
+            // options={receiptDetailsScreenOptions}
+         />
+         <ReceiptStackNavigator.Screen
+            name="EditReceipt"
+            component={EditReceipt}
             // options={receiptDetailsScreenOptions}
          />
       </ReceiptStackNavigator.Navigator>

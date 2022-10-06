@@ -7,6 +7,7 @@ import {
    StyleSheet,
    ActivityIndicator,
    TouchableOpacity,
+   Alert,
 } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
@@ -24,7 +25,25 @@ const ProjectList = (props) => {
    const [error, setError] = useState();
 
    var projects = useSelector((state) => state.projects.projects);
+   const isFocused = useIsFocused();
+
    const dispatch = useDispatch();
+
+   const loadProjects = useCallback(async () => {
+      setError(null);
+      setIsLoading(true);
+      try {
+         await dispatch(projectActions.fetchProjects());
+      } catch (err) {
+         setError(err.message);
+      }
+      setIsLoading(false);
+   }, [dispatch, setError, setIsLoading]);
+
+   useEffect(() => {
+      loadProjects();
+   }, [dispatch, loadProjects, isFocused]);
+
    const getProjectReports = (projectId) => {
       props.navigation.navigate("ProjectReports", {
          projectId: projectId,
@@ -46,8 +65,6 @@ const ProjectList = (props) => {
       },
       [useDispatch]
    );
-
-   const isFocused = useIsFocused();
 
    useEffect(() => {
       if (error) {

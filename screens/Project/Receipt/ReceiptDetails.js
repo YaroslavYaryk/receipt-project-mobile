@@ -35,8 +35,10 @@ const ReceiptDetails = (props) => {
    const dispatch = useDispatch();
 
    const receipt = useSelector((state) =>
-      state.receipts.receipts.find((el) => (el.id = id))
+      state.receipts.receipts.find((el) => el.id === id)
    );
+   var a = useSelector((state) => state.receipts.receipts);
+   console.log(a.map((el) => el.id));
 
    const handleDeleteReceipt = useCallback(
       async (id) => {
@@ -275,7 +277,7 @@ export const screenOptions = (navData) => {
                icon={MaterialIcons}
                iconName={Platform.OS === "android" ? "create" : "ios-create"}
                onPress={() => {
-                  navData.navigation.navigate("CreateProject");
+                  navData.navigation.navigate("EditReceipt", { id: id });
                }}
             />
          </HeaderButtons>

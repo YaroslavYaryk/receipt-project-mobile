@@ -4,15 +4,23 @@ import {
    ADD_PROJECT,
    DELETE_PROJECT,
    EDIT_PROJECT,
+   READ_PRODUCTS,
+   READ_PRODUCT_REPORTS,
 } from "../actions/projectActions";
 
 const initialState = {
-   projects: PROJECTS,
-   projectReports: PROJECT_REPORTS,
+   projects: [],
+   projectReports: [],
 };
 
 const projectReducer = (state = initialState, action) => {
    switch (action.type) {
+      case READ_PRODUCTS:
+         return {
+            ...state,
+            projects: action.projects,
+         };
+
       case ADD_PROJECT:
          var new_project = {
             id: action.id,
@@ -29,7 +37,7 @@ const projectReducer = (state = initialState, action) => {
          var projIndex = oldProjects.findIndex((elem) => (elem.id = id));
          var oldProject = oldProjects[projIndex];
          oldProject.name = name;
-         oldProject[projIndex] = oldProject;
+         oldProjects[projIndex] = oldProject;
          // oldProjects.map((el) => (el.height = 0));
          return {
             ...state,
@@ -39,6 +47,12 @@ const projectReducer = (state = initialState, action) => {
          return {
             ...state,
             projects: state.projects.filter((obj) => obj.id != action.id),
+         };
+
+      case READ_PRODUCT_REPORTS:
+         return {
+            ...state,
+            projectReports: action.reports,
          };
    }
    return state;

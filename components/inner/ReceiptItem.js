@@ -55,7 +55,13 @@ const ReceiptItem = (props) => {
                      { paddingBottom: 10, marginBottom: 3 },
                   ]}
                >
-                  <Slider images={item.photos.map((el) => el.url)} />
+                  <Slider
+                     images={
+                        item.photos
+                           ? item.photos.map((el) => el.url)
+                           : [props.defaultImage]
+                     }
+                  />
                </View>
                <View
                   style={[

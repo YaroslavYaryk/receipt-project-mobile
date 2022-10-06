@@ -62,7 +62,7 @@ var RECEIPTS = [
       "http://192.168.0.109:8000/media/pdfs/receipt_12.pdf"
    ),
    new Receipt(
-      233,
+      12,
       2,
       3,
       "new project",
