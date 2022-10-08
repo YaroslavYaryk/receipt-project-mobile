@@ -21,7 +21,6 @@ const ProjectReports = (props) => {
    const [error, setError] = useState();
 
    var projectId = props.route.params.projectId;
-   console.log(projectId);
    const projectReports = useSelector((state) => state.projects.projectReports);
 
    const isFocused = useIsFocused();

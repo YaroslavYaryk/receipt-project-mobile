@@ -5,12 +5,12 @@ export const ADD_RECEIPT = "ADD_RECEIPT";
 export const EDIT_RECEIPT = "EDIT_RECEIPT";
 export const DELETE_RECEIPT = "DELETE_RECEIPT";
 export const READ_CATEGORIES = "READ_CATEGORIES";
+export const READ_RECEIPT_FILE = "READ_RECEIPT_FILE";
 
 export const fetchReceipts = () => {
    try {
       return async (dispatch, getState) => {
-         var token = "7a2b1f9d3ebb40559740156d6d6ae6aca6b0c4c9";
-
+         var token = getState().auth.token;
          const response = await fetch(`${HOST}:${PORT}/api/receipts/`, {
             method: "GET",
             headers: {
@@ -91,9 +91,7 @@ export const createReceipt = (
             type: "image/jpeg",
          });
       }
-      console.log(formdata);
-
-      var token = "7a2b1f9d3ebb40559740156d6d6ae6aca6b0c4c9";
+      var token = getState().auth.token;
 
       const response = await fetch(`${HOST}:${PORT}/api/receipt/create/`, {
          method: "POST",
@@ -106,7 +104,9 @@ export const createReceipt = (
       });
 
       if (!response.ok) {
-         throw new Error("Something went wrong");
+         const errorResData = await response.json();
+         throw new Error(errorResData.message);
+         // work here
       }
 
       const resData = await response.json();
@@ -170,9 +170,7 @@ export const editReceipt = (
             type: "image/jpeg",
          });
       }
-      console.log(formdata);
-
-      var token = "7a2b1f9d3ebb40559740156d6d6ae6aca6b0c4c9";
+      var token = getState().auth.token;
 
       const response = await fetch(
          `${HOST}:${PORT}/api/receipt/update/${receiptId}/`,
@@ -188,7 +186,9 @@ export const editReceipt = (
       );
 
       if (!response.ok) {
-         throw new Error("Something went wrong");
+         const errorResData = await response.json();
+         throw new Error(errorResData.message);
+         // work here
       }
 
       const resData = await response.json();
@@ -221,19 +221,25 @@ export const editReceipt = (
 
 export const deleteReceipt = (id) => {
    return async (dispatch, getState) => {
-      //   const token = getState().auth.token;
-      //   const userId = getState().auth.userId;
+      var token = getState().auth.token;
+      const response = await fetch(
+         `${HOST}:${PORT}/api/receipt/delete/${id}/`,
+         {
+            method: "DELETE",
+            headers: {
+               "Content-Type": "application/json",
+               "Access-Control-Allow-Origin": "*",
+               Authorization: `Token ${token}`,
+            },
+         }
+      );
 
-      //   const response = await fetch(
-      //       `https://web-store-app-d2355-default-rtdb.firebaseio.com/orders/${userId}/${orderId}.json?auth=${token}`,
-      //       {
-      //           method: "DELETE",
-      //       }
-      //   );
+      if (!response.ok) {
+         const errorResData = await response.json();
+         throw new Error(errorResData.message);
+         // work here
+      }
 
-      //   if (!response.ok) {
-      //       throw new Error("Something went wrong");
-      //   }
       dispatch({
          type: DELETE_RECEIPT,
          id: id,
@@ -244,7 +250,7 @@ export const deleteReceipt = (id) => {
 export const fetchCategories = () => {
    try {
       return async (dispatch, getState) => {
-         var token = "7a2b1f9d3ebb40559740156d6d6ae6aca6b0c4c9";
+         var token = getState().auth.token;
 
          const response = await fetch(`${HOST}:${PORT}/api/categories/`, {
             method: "GET",
@@ -267,4 +273,33 @@ export const fetchCategories = () => {
    } catch (err) {
       throw err;
    }
+};
+
+export const fetchReceiptFile = (id) => {
+   return async (dispatch, getState) => {
+      var token = getState().auth.token;
+      const response = await fetch(
+         `${HOST}:${PORT}/api/receipt/${id}/report_file/`,
+         {
+            method: "GET",
+            headers: {
+               "Content-Type": "application/json",
+               "Access-Control-Allow-Origin": "*",
+               Authorization: `Token ${token}`,
+            },
+         }
+      );
+
+      if (!response.ok) {
+         throw new Error("Something went wrong");
+      }
+
+      const resData = await response.json();
+
+      dispatch({
+         type: READ_RECEIPT_FILE,
+         id: id,
+         file: resData.file_document,
+      });
+   };
 };

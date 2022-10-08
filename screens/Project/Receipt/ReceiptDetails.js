@@ -38,7 +38,23 @@ const ReceiptDetails = (props) => {
       state.receipts.receipts.find((el) => el.id === id)
    );
    var a = useSelector((state) => state.receipts.receipts);
-   console.log(a.map((el) => el.id));
+
+   const loadFile = useCallback(async () => {
+      setError(null);
+      setIsLoading(true);
+      try {
+         await dispatch(receiptActions.fetchReceiptFile(id));
+      } catch (err) {
+         setError(err.message);
+      }
+      setIsLoading(false);
+   }, [dispatch, setError, setIsLoading]);
+
+   useEffect(() => {
+      if (!receipt.file_document) {
+         loadFile();
+      }
+   }, [dispatch, loadFile]);
 
    const handleDeleteReceipt = useCallback(
       async (id) => {

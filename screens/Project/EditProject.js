@@ -132,7 +132,9 @@ const EditProject = (props) => {
                   style={[
                      styles.saveButtonBlockInner,
                      {
-                        backgroundColor: Colors.header,
+                        backgroundColor: formState.formIsValid
+                           ? Colors.header
+                           : "grey",
                      },
                   ]}
                >

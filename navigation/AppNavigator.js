@@ -5,7 +5,6 @@ import {
    DrawerItemList,
 } from "@react-navigation/drawer";
 import ReceiptList from "../screens/Project/Receipt/ReceiptList";
-import AuthScreen from "../screens/Auth/AuthScreen";
 import ProjectList from "../screens/Project/ProjectList";
 import { screenOptions as projectScreenOptions } from "../screens/Project/ProjectList";
 import ProjectReports from "../screens/Project/ProjectReports";
@@ -17,6 +16,14 @@ import ReceiptDetails from "../screens/Project/Receipt/ReceiptDetails";
 import { screenOptions as receiptDetailsScreenOptions } from "../screens/Project/Receipt/ReceiptDetails";
 import CreateReceipt from "../screens/Project/Receipt/CreateReceipt";
 import EditReceipt from "../screens/Project/Receipt/EditReceipt";
+import Login from "../screens/Auth/Login";
+import { screenOptions as loginScreenOptions } from "../screens/Auth/Login";
+import Registration from "../screens/Auth/Registration";
+import { screenOptions as refistrationScreenOptions } from "../screens/Auth/Registration";
+import Profile from "../screens/Account/Profile";
+import { screenOptions as profileScreenActions } from "../screens/Account/Profile";
+import EditProfile from "../screens/Account/EditProfile";
+import { screenOptions as editProfileScreenOptions } from "../screens/Account/EditProfile";
 import Colors from "../constants/Colors";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import Icon, { Icons } from "../components/inner/Icon";
@@ -70,11 +77,35 @@ export const AuthNavigator = () => {
    return (
       <AuthStackNavigator.Navigator screenOptions={defaultNavOptions}>
          <AuthStackNavigator.Screen
-            name="AuthScreen"
-            component={AuthScreen}
-            // options={productsOverviewScreenOptions}
+            name="Login"
+            component={Login}
+            options={loginScreenOptions}
+         />
+         <AuthStackNavigator.Screen
+            name="Registration"
+            component={Registration}
+            options={refistrationScreenOptions}
          />
       </AuthStackNavigator.Navigator>
+   );
+};
+
+const AccountStackNavigator = createStackNavigator();
+
+export const AccountNavigator = () => {
+   return (
+      <AccountStackNavigator.Navigator screenOptions={defaultNavOptions}>
+         <AccountStackNavigator.Screen
+            name="Profile"
+            component={Profile}
+            options={profileScreenActions}
+         />
+         <AccountStackNavigator.Screen
+            name="EditProfile"
+            component={EditProfile}
+            options={editProfileScreenOptions}
+         />
+      </AccountStackNavigator.Navigator>
    );
 };
 
@@ -180,8 +211,8 @@ export const BaseFullNavigator = () => {
             }}
          />
          <Tab.Screen
-            name="AuthNavigator"
-            component={AuthNavigator}
+            name="AccountNavigator"
+            component={AccountNavigator}
             listeners={{
                tabPress: (e) => {
                   // e.preventDefault();

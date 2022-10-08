@@ -23,11 +23,7 @@ import {
 } from "react-native";
 // import { ImagePicker } from "expo-image-multiple-picker";
 import * as ImagePicker from "expo-image-picker";
-import { useTheme } from "react-native-paper";
-import Animated from "react-native-reanimated";
 import Colors from "../../../constants/Colors";
-import BottomSheet from "reanimated-bottom-sheet";
-import ModalSelector from "react-native-modal-selector";
 import { useSelector, useDispatch } from "react-redux";
 import ReceiptSelect from "../../../components/inner/ReceiptSelect";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -69,7 +65,6 @@ const EditReceipt = (props) => {
    const receipt = useSelector((state) =>
       state.receipts.receipts.find((el) => el.id === id)
    );
-   console.log(receipt);
 
    const [libraryImages, setLibraryImages] = useState(
       receipt.photos ? receipt.photos.map((el) => el.url) : []
@@ -136,13 +131,19 @@ const EditReceipt = (props) => {
          setPopupOpen(false);
       }
    };
-   const formValid =
+
+   var formValid = false;
+
+   if (
       receipt.categoryName &&
       receipt.price &&
       receipt.description &&
       receipt.business &&
       receipt.persons &&
-      receipt.comment;
+      receipt.comment
+   ) {
+      formValid = true;
+   }
 
    const [formState, dispatchFormState] = useReducer(formReducer, {
       inputValues: {
@@ -329,7 +330,6 @@ const EditReceipt = (props) => {
                   />
                )}
             </View>
-            {console.log(receipt.price ? receipt.price : "")}
             <View style={[{ margin: 10, marginBottom: 18 }]}>
                <Input
                   id="price"
@@ -455,7 +455,9 @@ const EditReceipt = (props) => {
                   style={[
                      styles.saveButtonBlockInner,
                      {
-                        backgroundColor: Colors.header,
+                        backgroundColor: formState.formIsValid
+                           ? Colors.header
+                           : "grey",
                      },
                   ]}
                >

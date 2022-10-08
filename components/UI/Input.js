@@ -1,6 +1,13 @@
-import React, { useReducer, useEffect } from "react";
-import { View, Text, TextInput, StyleSheet } from "react-native";
+import React, { useReducer, useEffect, useState } from "react";
+import {
+   View,
+   Text,
+   TextInput,
+   StyleSheet,
+   TouchableOpacity,
+} from "react-native";
 import Colors from "../../constants/Colors";
+import { Ionicons } from "@expo/vector-icons";
 
 const INPUT_CHANGE = "INPUT_CHANGE";
 const INPUT_BLUR = "INPUT_BLUR";
@@ -29,6 +36,8 @@ const Input = (props) => {
       isValid: props.initiallyValid,
       touched: false,
    });
+   const [hiddenText, setHiddenText] = useState(props.secureTextEntry);
+   const [hideUnhideTextIcon, setHideUnhideTextIcon] = useState("eye-off");
 
    const { onInputChange, id } = props;
 
@@ -41,15 +50,31 @@ const Input = (props) => {
    const textChangeHandler = (text) => {
       const emailRegex =
          /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+      const intRegex = /^\d+$/;
+
+      const phoneRegex =
+         /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
+
       let isValid = true;
       if (props.required && text.trim().length === 0) {
          isValid = false;
          console.log("1");
       }
+
       if (props.email && !emailRegex.test(text.toLowerCase())) {
          isValid = false;
          console.log("2");
       }
+
+      if (props.integer && !intRegex.test(text.toLowerCase())) {
+         isValid = false;
+      }
+
+      if (props.phone && !phoneRegex.test(text.toLowerCase())) {
+         isValid = false;
+      }
+
       if (props.min != null && +text < props.min) {
          isValid = false;
          console.log("3");
@@ -70,6 +95,15 @@ const Input = (props) => {
       dispatch({ type: INPUT_CHANGE, value: text, isValid: isValid });
    };
 
+   const reveal1Password = () => {
+      setHiddenText(!hiddenText);
+      if (hideUnhideTextIcon == "eye-off") {
+         setHideUnhideTextIcon("eye");
+      } else {
+         setHideUnhideTextIcon("eye-off");
+      }
+   };
+
    const lostFocusHandler = () => {
       dispatch({ type: INPUT_BLUR });
    };
@@ -83,13 +117,27 @@ const Input = (props) => {
                styles.input,
                { height: props.height ? props.height : null },
             ]}
+            secureTextEntry={hiddenText}
             value={inputState.value}
             onChangeText={textChangeHandler}
             onBlur={lostFocusHandler}
          />
+         {["password", "confirmPassword"].includes(id) && (
+            <TouchableOpacity
+               style={styles.inputPasswordSee}
+               onPress={reveal1Password}
+            >
+               <Ionicons name={hideUnhideTextIcon} size={24} color="grey" />
+            </TouchableOpacity>
+         )}
          {!inputState.isValid && inputState.touched && props.required && (
             <View style={styles.errorContainer}>
                <Text style={styles.errorText}>{props.errorText}</Text>
+            </View>
+         )}
+         {props.dontMatchError && inputState.touched && (
+            <View style={{ marginTop: -25 }}>
+               <Text style={styles.errorText}>{props.dontMatchError}</Text>
             </View>
          )}
       </View>
@@ -114,6 +162,11 @@ const styles = StyleSheet.create({
    },
    errorContainer: {
       marginVertical: 5,
+   },
+   inputPasswordSee: {
+      position: "absolute",
+      top: 38,
+      right: 10,
    },
    errorText: {
       fontFamily: "open-sans",

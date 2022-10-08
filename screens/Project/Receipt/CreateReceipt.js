@@ -23,11 +23,8 @@ import {
 } from "react-native";
 // import { ImagePicker } from "expo-image-multiple-picker";
 import * as ImagePicker from "expo-image-picker";
-import { useTheme } from "react-native-paper";
 import Animated from "react-native-reanimated";
 import Colors from "../../../constants/Colors";
-import BottomSheet from "reanimated-bottom-sheet";
-import ModalSelector from "react-native-modal-selector";
 import { useSelector, useDispatch } from "react-redux";
 import ReceiptSelect from "../../../components/inner/ReceiptSelect";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -494,7 +491,9 @@ const CreateReceipt = (props) => {
                   style={[
                      styles.saveButtonBlockInner,
                      {
-                        backgroundColor: Colors.header,
+                        backgroundColor: formState.formIsValid
+                           ? Colors.header
+                           : "grey",
                      },
                   ]}
                >

@@ -9,7 +9,7 @@ export const READ_PRODUCT_REPORTS = "READ_PRODUCT_REPORTS";
 export const fetchProjects = () => {
    try {
       return async (dispatch, getState) => {
-         var token = "7a2b1f9d3ebb40559740156d6d6ae6aca6b0c4c9";
+         var token = getState().auth.token;
 
          const response = await fetch(`${HOST}:${PORT}/api/projects/`, {
             method: "GET",
@@ -38,7 +38,7 @@ export const fetchProjects = () => {
 
 export const add_project = (name) => {
    return async (dispatch, getState) => {
-      var token = "7a2b1f9d3ebb40559740156d6d6ae6aca6b0c4c9";
+      var token = getState().auth.token;
       const response = await fetch(`${HOST}:${PORT}/api/project/create/`, {
          method: "POST",
          headers: {
@@ -52,7 +52,9 @@ export const add_project = (name) => {
       });
 
       if (!response.ok) {
-         throw new Error("Something went wrong");
+         const errorResData = await response.json();
+         throw new Error(errorResData.message);
+         // work here
       }
 
       const resData = await response.json();
@@ -67,7 +69,7 @@ export const add_project = (name) => {
 
 export const editProject = (id, name) => {
    return async (dispatch, getState) => {
-      var token = "7a2b1f9d3ebb40559740156d6d6ae6aca6b0c4c9";
+      var token = getState().auth.token;
       const response = await fetch(
          `${HOST}:${PORT}/api/project/${id}/update/`,
          {
@@ -84,8 +86,11 @@ export const editProject = (id, name) => {
       );
 
       if (!response.ok) {
-         throw new Error("Something went wrong");
+         const errorResData = await response.json();
+         throw new Error(errorResData.message);
+         // work here
       }
+
       dispatch({
          type: EDIT_PROJECT,
          id: id,
@@ -96,7 +101,7 @@ export const editProject = (id, name) => {
 
 export const deleteProject = (id) => {
    return async (dispatch, getState) => {
-      var token = "7a2b1f9d3ebb40559740156d6d6ae6aca6b0c4c9";
+      var token = getState().auth.token;
       const response = await fetch(
          `${HOST}:${PORT}/api/project/${id}/delete/`,
          {
@@ -110,8 +115,11 @@ export const deleteProject = (id) => {
       );
 
       if (!response.ok) {
-         throw new Error("Something went wrong");
+         const errorResData = await response.json();
+         throw new Error(errorResData.message);
+         // work here
       }
+
       dispatch({
          type: DELETE_PROJECT,
          id: id,
@@ -122,7 +130,7 @@ export const deleteProject = (id) => {
 export const fetchProjectReports = (project) => {
    try {
       return async (dispatch, getState) => {
-         var token = "7a2b1f9d3ebb40559740156d6d6ae6aca6b0c4c9";
+         var token = getState().auth.token;
 
          const response = await fetch(
             `${HOST}:${PORT}/api/project_reports/${project}/all/`,

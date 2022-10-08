@@ -1,7 +1,7 @@
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
-import { BaseFullNavigator } from "./navigation/AppNavigator";
+import BaseAuthNavigator from "./navigation/BaseAuthNavigator";
 import * as Font from "expo-font";
 import AppLoading from "expo-app-loading";
 import { useState } from "react";
@@ -11,11 +11,15 @@ import { Provider } from "react-redux";
 import { combineReducers, applyMiddleware } from "redux";
 import receiptReducer from "./store/reducers/receiptReducer";
 import projectReducer from "./store/reducers/projectReducer";
+import authReducer from "./store/reducers/authReducer";
+import userReducer from "./store/reducers/userReducer";
 import { LogBox } from "react-native";
 
 const rootReducer = combineReducers({
    receipts: receiptReducer,
    projects: projectReducer,
+   auth: authReducer,
+   user: userReducer,
 });
 
 const store = configureStore(
@@ -57,9 +61,7 @@ export default function App() {
 
    return (
       <Provider store={store}>
-         <NavigationContainer>
-            <BaseFullNavigator />
-         </NavigationContainer>
+         <BaseAuthNavigator />
       </Provider>
    );
 }
