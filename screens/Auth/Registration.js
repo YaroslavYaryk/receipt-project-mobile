@@ -52,39 +52,8 @@ const Registration = (props) => {
    const [error, setError] = useState();
    const [diabledButton, setDisabledButton] = useState(true);
    const [dontMatchError, setDontMatchError] = useState(null);
-   const [redirect, setRedirect] = useState();
 
    const dispatch = useDispatch();
-
-   const retrieveData = useCallback(async () => {
-      try {
-         const value = await AsyncStorage.getItem("redirect");
-         setRedirect(JSON.parse(value));
-      } catch (error) {
-         // Error retrieving data
-      }
-      AsyncStorage.removeItem("redirect");
-   });
-
-   useEffect(() => {
-      retrieveData();
-   }, []);
-   var user = useSelector((state) => state.auth);
-   const getUser = () => {
-      if (user.token) {
-         if (redirect) {
-            props.navigation.navigate(redirect.redirectUrl, {
-               productId: redirect.productId,
-            });
-         } else {
-            props.navigation.navigate("Account");
-         }
-      }
-   };
-
-   useEffect(() => {
-      getUser();
-   }, [redirect, user]);
 
    useEffect(() => {
       if (error) {
@@ -251,7 +220,7 @@ const Registration = (props) => {
                            onInputChange={inputChangeHandler}
                            initialValue=""
                            login={true}
-                           placeholder="Повторіть пароль"
+                           placeholder="Confirm password"
                         />
                         <View style={styles.passwordRequirementsBlock}>
                            <Text style={styles.passwordRequirementsText}>

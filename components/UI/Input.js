@@ -36,6 +36,7 @@ const Input = (props) => {
       isValid: props.initiallyValid,
       touched: false,
    });
+   const [error, setError] = useState(props.errorText);
    const [hiddenText, setHiddenText] = useState(props.secureTextEntry);
    const [hideUnhideTextIcon, setHideUnhideTextIcon] = useState("eye-off");
 
@@ -75,8 +76,12 @@ const Input = (props) => {
          isValid = false;
       }
 
-      if (props.min != null && +text < props.min) {
+      if (props.password && text.trim().length < 8) {
          isValid = false;
+         setError("Password is required to be not less than 8 ");
+      }
+
+      if (props.min != null && +text < props.min) {
          console.log("3");
       }
       if (props.max != null && +text > props.max) {
@@ -122,7 +127,13 @@ const Input = (props) => {
             onChangeText={textChangeHandler}
             onBlur={lostFocusHandler}
          />
-         {["password", "confirmPassword"].includes(id) && (
+         {[
+            "password",
+            "confirmPassword",
+            "newPassword",
+            "newPasswordConfirm",
+            "oldPassword",
+         ].includes(id) && (
             <TouchableOpacity
                style={styles.inputPasswordSee}
                onPress={reveal1Password}
@@ -132,11 +143,11 @@ const Input = (props) => {
          )}
          {!inputState.isValid && inputState.touched && props.required && (
             <View style={styles.errorContainer}>
-               <Text style={styles.errorText}>{props.errorText}</Text>
+               <Text style={styles.errorText}>{error}</Text>
             </View>
          )}
          {props.dontMatchError && inputState.touched && (
-            <View style={{ marginTop: -25 }}>
+            <View style={{ marginTop: props.marginNon ? 0 : -25 }}>
                <Text style={styles.errorText}>{props.dontMatchError}</Text>
             </View>
          )}

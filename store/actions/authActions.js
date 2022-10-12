@@ -78,6 +78,61 @@ export const login = (email, password) => {
    };
 };
 
+export const resetPasswordEmail = (email) => {
+   return async (dispatch) => {
+      const response = await fetch(
+         `${HOST}:${PORT}/users/api/password_reset/`,
+         {
+            method: "POST",
+            headers: {
+               "Content-Type": "application/json",
+               "Access-Control-Allow-Origin": "*",
+            },
+            body: JSON.stringify({
+               email: email,
+            }),
+         }
+      );
+      if (!response.ok) {
+         const errorResData = await response.json();
+         throw new Error(errorResData.message);
+         // work here
+      }
+   };
+};
+
+export const resetPasswordConfirm = (token, password) => {
+   return async (dispatch) => {
+      console.log(token, password, "here");
+      const response = await fetch(
+         `${HOST}:${PORT}/users/api/password_reset/confirm/`,
+         {
+            method: "POST",
+            headers: {
+               "Content-Type": "application/json",
+               "Access-Control-Allow-Origin": "*",
+            },
+            body: JSON.stringify({
+               token: token,
+               password: password,
+            }),
+         }
+      );
+      if (!response.ok) {
+         const errorResData = await response.json();
+         console.log(errorResData);
+         var message = "";
+         for (var key in errorResData) {
+            //key will be -> 'id'
+            //dictionary[key] -> 'value'
+            message += errorResData[key] + "\n";
+         }
+         throw new Error(message);
+         // work here
+      }
+   };
+};
+
 export const logout = () => {
    clearLogoutTimer();
    AsyncStorage.removeItem("userData");

@@ -20,15 +20,23 @@ import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import * as authActions from "../../store/actions/authActions";
 import * as userActions from "../../store/actions/userActions";
 import UserField from "../../components/inner/UserField";
-
+import SeccessPopup from "../../components/UI/SuccessPopup";
 const { width } = Dimensions.get("window");
 
-const Profile = () => {
+const Profile = (props) => {
    const [error, setError] = useState(null);
    const [isLoading, setIsLoading] = useState(false);
-
+   const [visible, setVisible] = useState(false);
+   const [message, setMessage] = useState(null);
    const user = useSelector((state) => state.user.user);
    const dispatch = useDispatch();
+
+   useEffect(() => {
+      if (props.route.params) {
+         setMessage(props.route.params.message);
+         setVisible(true);
+      }
+   }, [props.route.params]);
 
    const loadUser = useCallback(async () => {
       setError(null);
@@ -57,6 +65,17 @@ const Profile = () => {
       setIsLoading(false);
    };
 
+   const userFields = [
+      { label: "Email", value: user.email },
+      { label: "Name", value: user.name },
+      { label: "Phone", value: user.phone },
+      { label: "City", value: user.city },
+      { label: "Address", value: user.address },
+      { label: "Postal code", value: user.postalCode },
+      { label: "Birthdate", value: user.birthDate },
+      { label: "Account number", value: user.accountNumber },
+   ];
+
    if (error) {
       return (
          <View style={styles.centered}>
@@ -77,17 +96,6 @@ const Profile = () => {
          </View>
       );
    }
-
-   const userFields = [
-      { label: "Email", value: user.email },
-      { label: "Name", value: user.name },
-      { label: "Phone", value: user.phone },
-      { label: "City", value: user.city },
-      { label: "Address", value: user.address },
-      { label: "Postal code", value: user.postalCode },
-      { label: "Birthdate", value: user.birthDate },
-      { label: "Account number", value: user.accountNumber },
-   ];
 
    return (
       <View style={styles.container}>
@@ -110,37 +118,98 @@ const Profile = () => {
             </View>
             <View>
                {userFields.map((el) => (
-                  <UserField label={el.label} value={el.value} />
+                  <UserField
+                     label={el.label}
+                     value={el.value}
+                     key={
+                        Math.random() +
+                        Math.random() +
+                        Math.random() +
+                        Math.random()
+                     }
+                  />
                ))}
             </View>
             <View
-               style={{
-                  borderWidth: 3,
-                  padding: 10,
-                  borderColor: "#CCCCCC",
-                  borderRadius: 10,
-                  backgroundColor: Colors.header,
-               }}
+               style={{ flexDirection: "row", justifyContent: "space-around" }}
             >
-               <TouchableOpacity
-                  onPress={() => {
-                     logoutHandle();
+               <View
+                  style={{
+                     width: "45%",
+                     borderWidth: 3,
+                     padding: 10,
+                     borderColor: Colors.headerBold,
+                     borderRadius: 10,
+                     backgroundColor: Colors.headerBoldLight,
+                     alignItems: "center",
+                     justifyContent: "center",
                   }}
                >
-                  <View style={{ alignItems: "center" }}>
-                     <Text
+                  <TouchableOpacity
+                     onPress={() => {
+                        props.navigation.navigate("ChangePassword");
+                     }}
+                  >
+                     <View
                         style={{
-                           fontSize: 20,
-                           fontWeight: "700",
-                           color: "#fff",
+                           alignItems: "center",
+                           justifyContent: "center",
                         }}
                      >
-                        Logout
-                     </Text>
-                  </View>
-               </TouchableOpacity>
+                        <Text
+                           style={{
+                              fontSize: 18,
+                              fontWeight: "700",
+                              color: "#fff",
+                           }}
+                        >
+                           Change password
+                        </Text>
+                     </View>
+                  </TouchableOpacity>
+               </View>
+               <View
+                  style={{
+                     width: "45%",
+                     borderWidth: 3,
+                     padding: 10,
+                     borderColor: "#CCCCCC",
+                     borderRadius: 10,
+                     backgroundColor: Colors.header,
+                     alignItems: "center",
+                     justifyContent: "center",
+                  }}
+               >
+                  <TouchableOpacity
+                     onPress={() => {
+                        logoutHandle();
+                     }}
+                  >
+                     <View
+                        style={{
+                           alignItems: "center",
+                           justifyContent: "center",
+                        }}
+                     >
+                        <Text
+                           style={{
+                              fontSize: 18,
+                              fontWeight: "700",
+                              color: "#fff",
+                           }}
+                        >
+                           Logout
+                        </Text>
+                     </View>
+                  </TouchableOpacity>
+               </View>
             </View>
          </ScrollView>
+         <SeccessPopup
+            visible={visible}
+            setVisible={setVisible}
+            message={message}
+         />
       </View>
    );
 };

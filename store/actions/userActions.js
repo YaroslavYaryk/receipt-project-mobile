@@ -106,3 +106,30 @@ export const editUser = (
       });
    };
 };
+
+export const changePassword = (oldPassword, newPassword) => {
+   return async (dispatch, getState) => {
+      var token = getState().auth.token;
+      const response = await fetch(
+         `${HOST}:${PORT}/users/api/password_change/`,
+         {
+            method: "PUT",
+            headers: {
+               "Content-Type": "application/json",
+               "Access-Control-Allow-Origin": "*",
+               Authorization: `Token ${token}`,
+            },
+            body: JSON.stringify({
+               old_password: oldPassword,
+               new_password: newPassword,
+            }),
+         }
+      );
+
+      if (!response.ok) {
+         const errorResData = await response.json();
+         throw new Error(errorResData.message);
+         // work here
+      }
+   };
+};

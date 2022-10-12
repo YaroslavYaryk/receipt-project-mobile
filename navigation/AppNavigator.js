@@ -24,6 +24,14 @@ import Profile from "../screens/Account/Profile";
 import { screenOptions as profileScreenActions } from "../screens/Account/Profile";
 import EditProfile from "../screens/Account/EditProfile";
 import { screenOptions as editProfileScreenOptions } from "../screens/Account/EditProfile";
+import ChangePassword from "../screens/Account/ChangePassword";
+import { screenOptions as changePasswordScreenOptions } from "../screens/Account/ChangePassword";
+import ResetPasswordEmail from "../screens/Auth/ResetPasswordEmail";
+import { screenOptions as resetPasswordEmailScreenOptions } from "../screens/Auth/ResetPasswordEmail";
+import ResetPasswordToken from "../screens/Auth/ResetPasswordToken";
+import { screenOptions as resetPasswordTokenScreenOptions } from "../screens/Auth/ResetPasswordToken";
+import ResetPasswordNewPassword from "../screens/Auth/ResetPasswordNewPassword";
+import { screenOptions as resetPasswordNewPasswordScreenOptions } from "../screens/Auth/ResetPasswordNewPassword";
 import Colors from "../constants/Colors";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import Icon, { Icons } from "../components/inner/Icon";
@@ -86,6 +94,21 @@ export const AuthNavigator = () => {
             component={Registration}
             options={refistrationScreenOptions}
          />
+         <AuthStackNavigator.Screen
+            name="ResetPasswordEmail"
+            component={ResetPasswordEmail}
+            options={resetPasswordEmailScreenOptions}
+         />
+         <AuthStackNavigator.Screen
+            name="ResetPasswordToken"
+            component={ResetPasswordToken}
+            options={resetPasswordTokenScreenOptions}
+         />
+         <AuthStackNavigator.Screen
+            name="ResetPasswordNewPassword"
+            component={ResetPasswordNewPassword}
+            options={resetPasswordNewPasswordScreenOptions}
+         />
       </AuthStackNavigator.Navigator>
    );
 };
@@ -104,6 +127,11 @@ export const AccountNavigator = () => {
             name="EditProfile"
             component={EditProfile}
             options={editProfileScreenOptions}
+         />
+         <AccountStackNavigator.Screen
+            name="ChangePassword"
+            component={ChangePassword}
+            options={changePasswordScreenOptions}
          />
       </AccountStackNavigator.Navigator>
    );

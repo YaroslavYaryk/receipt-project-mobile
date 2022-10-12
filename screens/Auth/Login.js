@@ -18,6 +18,7 @@ import { HeaderBackButton } from "@react-navigation/stack";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as authActions from "../../store/actions/authActions";
 import { HOST, PORT } from "../../constants/server";
+import SeccessPopup from "../../components/UI/SuccessPopup";
 
 const { width } = Dimensions.get("window");
 
@@ -50,40 +51,17 @@ const Login = (props) => {
    const [isLoading, setIsLoading] = useState(false);
    const [error, setError] = useState();
    const [diabledButton, setDisabledButton] = useState(true);
-   const [redirect, setRedirect] = useState();
+   const [visible, setVisible] = useState(false);
+   const [message, setMessage] = useState(null);
 
    const dispatch = useDispatch();
 
-   const retrieveData = useCallback(async () => {
-      try {
-         const value = await AsyncStorage.getItem("redirect");
-         setRedirect(JSON.parse(value));
-      } catch (error) {
-         // Error retrieving data
-      }
-      AsyncStorage.removeItem("redirect");
-   });
-
    useEffect(() => {
-      retrieveData();
-   }, []);
-   var user = useSelector((state) => state.auth);
-   const getUser = () => {
-      if (user.token) {
-         if (redirect) {
-            props.navigation.navigate(redirect.redirectUrl, {
-               productId: redirect.productId,
-               commentId: redirect.commentId ? redirect.commentId : null,
-            });
-         } else {
-            props.navigation.navigate("Account");
-         }
+      if (props.route.params) {
+         setMessage(props.route.params.message);
+         setVisible(true);
       }
-   };
-
-   useEffect(() => {
-      getUser();
-   }, [redirect, user]);
+   }, [props.route.params]);
 
    useEffect(() => {
       if (error) {
@@ -143,14 +121,10 @@ const Login = (props) => {
       [dispatchFormState]
    );
 
-   const redirectToRegistration = () => {
-      props.navigation.navigate("Registration");
-   };
-
    if (isLoading) {
       return (
          <View style={styles.centered}>
-            <ActivityIndicator size="large" color={Colors.primary} />
+            <ActivityIndicator size="large" color={Colors.headerBold} />
          </View>
       );
    }
@@ -192,7 +166,7 @@ const Login = (props) => {
                               onInputChange={inputChangeHandler}
                               initialValue=""
                               login={true}
-                              placeholder="Електронна пошта"
+                              placeholder="Email"
                            />
                         </View>
                         <Input
@@ -208,7 +182,7 @@ const Login = (props) => {
                            onInputChange={inputChangeHandler}
                            initialValue=""
                            login={true}
-                           placeholder="Пароль"
+                           placeholder="Password"
                         />
                         <View style={{ marginTop: 15 }}>
                            {/* {isLoading ? (
@@ -226,11 +200,13 @@ const Login = (props) => {
                            <View style={styles.forgotPassword}>
                               <TouchableOpacity
                                  onPress={() => {
-                                    console.log("forgot password");
+                                    props.navigation.navigate(
+                                       "ResetPasswordEmail"
+                                    );
                                  }}
                               >
                                  <Text style={styles.forgotPasswordText}>
-                                    Забули праоль?
+                                    Forgot password?
                                  </Text>
                               </TouchableOpacity>
                            </View>
@@ -240,6 +216,11 @@ const Login = (props) => {
                </View>
             </ScrollView>
          </View>
+         <SeccessPopup
+            visible={visible}
+            setVisible={setVisible}
+            message={message}
+         />
       </View>
    );
 };
