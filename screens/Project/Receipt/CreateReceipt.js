@@ -113,12 +113,11 @@ const CreateReceipt = (props) => {
    const pickImage = async () => {
       // No permissions request is necessary for launching the image library
       let result = await ImagePicker.launchImageLibraryAsync({
-         mediaTypes: ImagePicker.MediaTypeOptions.All,
+         mediaTypes: ImagePicker.MediaTypeOptions.Images,
          aspect: [4, 3],
          quality: 1,
          allowsMultipleSelection: true,
       });
-
       if (!result.cancelled) {
          if (result.selected) {
             setLibraryImages(result.selected.map((el) => el.uri));
@@ -250,14 +249,6 @@ const CreateReceipt = (props) => {
          >
             <Text style={styles.panelButtonTitle}>Cancel</Text>
          </TouchableOpacity>
-      </View>
-   );
-
-   const renderHeader = () => (
-      <View style={styles.header}>
-         <View style={styles.panelHeader}>
-            <View style={styles.panelHandle} />
-         </View>
       </View>
    );
 
@@ -397,22 +388,30 @@ const CreateReceipt = (props) => {
             {images.length > 0 && (
                <View
                   style={{
-                     height: 50,
-                     flexDirection: "row",
-                     alignItems: "flex-start",
-                     justifyContent: "space-around",
                      marginTop: 10,
-                     // width: "10%",
                   }}
                >
-                  {images.map((el) => (
-                     <View key={el} style={{ height: "100%" }}>
-                        <Image
-                           source={{ uri: el }}
-                           style={styles.imageScroll}
-                        />
+                  <ScrollView horizontal={true} persistentScrollbar={true}>
+                     <View
+                        style={{
+                           height: 50,
+                           flexDirection: "row",
+                           marginLeft: 10,
+                           width: width - 20,
+
+                           // marginTop: 10,
+                        }}
+                     >
+                        {images.map((el) => (
+                           <View key={el} style={{ height: "100%" }}>
+                              <Image
+                                 source={{ uri: el }}
+                                 style={styles.imageScroll}
+                              />
+                           </View>
+                        ))}
                      </View>
-                  ))}
+                  </ScrollView>
                </View>
             )}
             <View style={[{ margin: 10, marginBottom: 18 }]}>
@@ -684,10 +683,9 @@ const styles = StyleSheet.create({
       fontWeight: "600",
    },
    imageScroll: {
-      width,
+      width: 100,
       height: "100%",
       resizeMode: "contain",
-      position: "relative",
    },
 });
 

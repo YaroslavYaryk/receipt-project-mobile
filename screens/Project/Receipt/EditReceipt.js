@@ -361,22 +361,40 @@ const EditReceipt = (props) => {
             {images.length > 0 && (
                <View
                   style={{
-                     height: 50,
-                     flexDirection: "row",
-                     alignItems: "flex-start",
-                     justifyContent: "space-around",
                      marginTop: 10,
-                     // width: "10%",
+                     marginLeft: 10,
+                     width: width - 20,
                   }}
                >
-                  {images.map((el) => (
-                     <View key={el} style={{ height: "100%" }}>
-                        <Image
-                           source={{ uri: el }}
-                           style={styles.imageScroll}
-                        />
+                  <ScrollView horizontal={true} persistentScrollbar={true}>
+                     <View
+                        style={{
+                           height: 50,
+                           flexDirection: "row",
+
+                           // marginTop: 10,
+                        }}
+                     >
+                        {images.map((el) => (
+                           <View
+                              key={el}
+                              style={{
+                                 height: "100%",
+                                 marginRight: 5,
+                                 // width: 100,
+                                 // flex: 1,
+                                 // alignItems: "flex-start",
+                                 // justifyContent: "flex-start",
+                              }}
+                           >
+                              <Image
+                                 source={{ uri: el }}
+                                 style={styles.imageScroll}
+                              />
+                           </View>
+                        ))}
                      </View>
-                  ))}
+                  </ScrollView>
                </View>
             )}
             <View style={[{ margin: 10, marginBottom: 18 }]}>
@@ -648,10 +666,9 @@ const styles = StyleSheet.create({
       fontWeight: "600",
    },
    imageScroll: {
-      width,
+      width: 100,
       height: "100%",
       resizeMode: "contain",
-      position: "relative",
    },
 });
 
